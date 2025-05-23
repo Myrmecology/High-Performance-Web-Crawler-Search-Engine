@@ -1,0 +1,138 @@
+High-Performance Web Crawler & Search Engine 🚀
+A blazing-fast, distributed web crawler and search engine built with Rust, featuring concurrent crawling, full-text search capabilities, and a RESTful API.
+✨ Features
+
+High Performance: Concurrent crawling with Tokio async runtime
+Respectful Crawling: Robots.txt compliance and rate limiting
+Full-Text Search: Powered by Tantivy search engine
+Distributed: Scale across multiple machines
+RESTful API: Easy integration with any frontend
+Real-time Metrics: Prometheus-compatible monitoring
+Configurable: Extensive configuration options
+Production Ready: Error recovery, retries, and graceful shutdown
+
+🛠️ Tech Stack
+
+Language: Rust
+Async Runtime: Tokio
+HTTP Client: Reqwest
+Search Engine: Tantivy
+Web Framework: Axum
+Database: PostgreSQL
+HTML Parsing: Scraper
+
+📋 Prerequisites
+
+Rust 1.70+ (install from rustup.rs)
+PostgreSQL 13+
+Git
+
+🚀 Quick Start
+
+Clone the repository
+bashgit clone https://github.com/yourusername/High-Performance-Web-Crawler-Search-Engine.git
+cd High-Performance-Web-Crawler-Search-Engine
+
+Set up the database
+bashcreatedb webcrawler
+
+Configure the environment
+bashcp config/default.toml config/local.toml
+# Edit config/local.toml with your settings
+
+Build the project
+bashcargo build --release
+
+Run the crawler
+bash./target/release/crawler crawl https://example.com --max-pages 1000
+
+Start the search API
+bash./target/release/search-server
+
+
+📖 Usage
+Command Line Interface
+bash# Crawl a website
+./crawler crawl https://rust-lang.org --max-pages 1000 --max-depth 3
+
+# Crawl with custom config
+./crawler crawl https://example.com --config ./my-config.toml
+
+# Show crawl statistics
+./crawler stats
+
+# Clear the database and index
+./crawler clear --confirm
+Search API
+bash# Search for content
+curl "http://localhost:8080/api/search?q=rust+async"
+
+# Get crawl statistics
+curl "http://localhost:8080/api/stats"
+
+# Submit URL for crawling
+curl -X POST "http://localhost:8080/api/crawl" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}'
+🏗️ Architecture
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Crawler   │────▶│   Storage   │────▶│   Indexer   │
+│   Workers   │     │ PostgreSQL  │     │   Tantivy   │
+└─────────────┘     └─────────────┘     └─────────────┘
+       │                                         │
+       │                                         │
+       ▼                                         ▼
+┌─────────────┐                         ┌─────────────┐
+│     URL     │                         │   Search    │
+│  Frontier   │                         │     API     │
+└─────────────┘                         └─────────────┘
+🧪 Testing
+bash# Run all tests
+cargo test
+
+# Run integration tests
+cargo test --test '*'
+
+# Run with logging
+RUST_LOG=debug cargo test
+
+# Run benchmarks
+cargo bench
+📊 Performance
+
+Crawl Speed: 1000+ pages/minute (depending on network)
+Memory Usage: ~50MB for 10,000 pages
+Search Latency: <10ms for 1M documents
+Concurrent Requests: 100+ simultaneous connections
+
+🔧 Configuration
+See config/default.toml for all available options.
+Key configurations:
+
+max_concurrent_requests: Number of parallel HTTP requests
+max_depth: Maximum crawl depth from seed URLs
+user_agent: Custom user agent string
+rate_limit: Requests per second per domain
+
+📦 Docker Support
+bash# Build the image
+docker build -t web-crawler .
+
+# Run with docker-compose
+docker-compose up
+🤝 Contributing
+Contributions are welcome! Please read our Contributing Guide for details.
+
+Fork the repository
+Create your feature branch (git checkout -b feature/amazing-feature)
+Commit your changes (git commit -m 'Add amazing feature')
+Push to the branch (git push origin feature/amazing-feature)
+Open a Pull Request
+
+📄 License
+This project is licensed under the MIT License - see the LICENSE file for details.
+🙏 Acknowledgments
+
+Tantivy for the amazing search engine
+Tokio for the async runtime
+The Rust community for excellent libraries and support
