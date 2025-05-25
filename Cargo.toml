@@ -2,42 +2,31 @@
 name = "web-crawler"
 version = "0.1.0"
 edition = "2021"
-authors = ["Justin D <lacespidermath@gmail.com>"]
+authors = ["Your Name <your.email@example.com>"]
 description = "High-performance web crawler and search engine written in Rust"
-repository = "https://github.com/Myrmecology/High-Performance-Web-Crawler-Search-Engine"
+repository = "https://github.com/yourusername/High-Performance-Web-Crawler-Search-Engine"
 license = "MIT"
-keywords = ["web-crawler", "search-engine", "rust", "async"]
-categories = ["web-programming", "command-line-utilities"]
 
 [dependencies]
 # Async runtime
 tokio = { version = "1.35", features = ["full"] }
 
 # HTTP client
-reqwest = { version = "0.11", features = ["json", "cookies", "gzip", "brotli"] }
+ureq = "2.9"
 
 # HTML parsing
 scraper = "0.18"
-select = "0.6"
 
 # URL handling
 url = "2.5"
 
-# Search engine
-tantivy = "0.21"
-
 # Web framework
 axum = "0.7"
 tower = "0.4"
-tower-http = { version = "0.5", features = ["cors", "trace"] }
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-
-# Configuration
-config = "0.13"
-dotenv = "0.15"
 
 # Logging
 tracing = "0.1"
@@ -47,30 +36,20 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 thiserror = "1.0"
 anyhow = "1.0"
 
-# Database
-sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono"] }
-
 # Utilities
 chrono = { version = "0.4", features = ["serde"] }
-uuid = { version = "1.6", features = ["v4", "serde"] }
 regex = "1.10"
-lazy_static = "1.4"
 
 # CLI
-clap = { version = "4.4", features = ["derive", "env"] }
-
-# Metrics
-prometheus = "0.13"
+clap = { version = "4.4", features = ["derive"] }
 
 # Rate limiting
 governor = "0.6"
 
-# Robots.txt parsing
-robotparser = "0.11"
+# Simple key-value store
+sled = "0.34"
 
 [dev-dependencies]
-criterion = "0.5"
-mockito = "1.2"
 tempfile = "3.8"
 
 [[bin]]
@@ -81,12 +60,7 @@ path = "src/bin/crawler.rs"
 name = "search-server"
 path = "src/bin/search_server.rs"
 
-# [[bench]]
-# name = "crawler_benchmark"
-# harness = false
-
 [profile.release]
 opt-level = 3
 lto = true
 codegen-units = 1
-strip = true

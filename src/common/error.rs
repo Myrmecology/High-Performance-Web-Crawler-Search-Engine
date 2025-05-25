@@ -3,7 +3,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("HTTP request failed: {0}")]
-    HttpError(#[from] reqwest::Error),
+    HttpError(String),
     
     #[error("URL parse error: {0}")]
     UrlParseError(#[from] url::ParseError),
@@ -12,13 +12,13 @@ pub enum Error {
     HtmlParseError(String),
     
     #[error("Storage error: {0}")]
-    StorageError(#[from] sqlx::Error),
+    StorageError(#[from] sled::Error),
     
-    #[error("Index error: {0}")]
-    IndexError(#[from] tantivy::TantivyError),
+    #[error("Serialization error: {0}")]
+    SerializationError(#[from] serde_json::Error),
     
     #[error("Configuration error: {0}")]
-    ConfigError(#[from] config::ConfigError),
+    ConfigError(String),
     
     #[error("IO error: {0}")]
     IoError(#[from] std::io::Error),

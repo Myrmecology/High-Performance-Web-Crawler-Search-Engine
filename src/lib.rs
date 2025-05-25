@@ -15,6 +15,5 @@ pub use common::{config::Config, error::Result};
 /// Re-export commonly used types
 pub mod prelude {
     pub use crate::common::error::{Error, Result};
-    pub use crate::crawler::{Crawler, CrawlerBuilder};
-    pub use crate::search::{SearchEngine, SearchQuery};
+    pub use crate::common::config::Config;
 }

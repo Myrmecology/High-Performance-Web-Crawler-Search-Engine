@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use std::time::Duration;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Config {
@@ -38,11 +37,8 @@ pub struct CrawlerConfig {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct StorageConfig {
-    /// Database URL
-    pub database_url: String,
-    
-    /// Maximum connections in the pool
-    pub max_connections: u32,
+    /// Storage directory path
+    pub storage_path: String,
     
     /// Index directory path
     pub index_path: String,
@@ -92,8 +88,7 @@ impl Default for Config {
                 num_workers: 8,
             },
             storage: StorageConfig {
-                database_url: "postgres://localhost/webcrawler".to_string(),
-                max_connections: 10,
+                storage_path: "./data/storage".to_string(),
                 index_path: "./data/index".to_string(),
             },
             search: SearchConfig {
@@ -114,13 +109,9 @@ impl Default for Config {
 
 impl Config {
     /// Load configuration from files and environment
-    pub fn load() -> Result<Self, config::ConfigError> {
-        let config = config::Config::builder()
-            .add_source(config::File::with_name("config/default"))
-            .add_source(config::File::with_name("config/local").required(false))
-            .add_source(config::Environment::with_prefix("CRAWLER"))
-            .build()?;
-        
-        config.try_deserialize()
+    pub fn load() -> Result<Self, Box<dyn std::error::Error>> {
+        // For now, just return default config
+        // We'll implement file loading later
+        Ok(Config::default())
     }
 }
