@@ -81,9 +81,9 @@ path = "src/bin/crawler.rs"
 name = "search-server"
 path = "src/bin/search_server.rs"
 
-[[bench]]
-name = "crawler_benchmark"
-harness = false
+# [[bench]]
+# name = "crawler_benchmark"
+# harness = false
 
 [profile.release]
 opt-level = 3
