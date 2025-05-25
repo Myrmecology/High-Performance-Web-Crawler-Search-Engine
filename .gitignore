@@ -1,0 +1,197 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+
+# Remove Cargo.lock from gitignore for binary projects
+# Cargo.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.iml
+
+# VS Code specific
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+secrets/
+*.key
+*.pem
+*.cert
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Data and Databases
+/data/
+/index/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+postgres-data/
+redis-data/
+
+# Config (local overrides)
+config/local.toml
+config/production.toml
+config/development.toml
+config/secrets.toml
+
+# Test coverage
+tarpaulin-report.html
+cobertura.xml
+coverage/
+*.lcov
+.nyc_output/
+
+# Profiling
+*.profdata
+*.profraw
+perf.data
+perf.data.old
+flamegraph.svg
+callgrind.out.*
+cachegrind.out.*
+
+# Benchmarks
+/target/criterion/
+
+# Documentation
+/target/doc/
+/target/rls/
+
+# Backup files
+*.bak
+*.backup
+*~
+*.orig
+*.rej
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+tmp/
+temp/
+
+# Python (for any helper scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Node (if you add a web UI later)
+node_modules/
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Archives
+*.tar
+*.tar.gz
+*.zip
+*.7z
+*.rar
+
+# Executables (but not Rust's target)
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Rust specific workspace
+/target-install/
+/target-release/
+/target-debug/
+
+# Cargo configuration
+.cargo/registry
+.cargo/git
+!.cargo/config.toml
+
+# Build artifacts
+build/
+dist/
+out/
+
+# Cache directories
+.cache/
+.pytest_cache/
+.sass-cache/
+
+# Local crawler data
+crawl-data/
+download/
+screenshots/
+exports/
+
+# Session files
+session.json
+cookies.txt
+.session
+
+# Lock files (except Cargo.lock)
+*.lock
+!Cargo.lock
+package-lock.json
+yarn.lock
+
+# Terraform (if you deploy to cloud)
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Sensitive crawler configs
+urls-private.txt
+domains-blacklist.txt
+api-keys.json
