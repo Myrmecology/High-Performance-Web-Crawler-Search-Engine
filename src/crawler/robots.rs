@@ -39,23 +39,15 @@ pub struct RobotsChecker {
     cache: Arc<Mutex<HashMap<String, RobotsCache>>>,
     cache_duration: Duration,
     user_agent: String,
-    fetcher: crate::crawler::Fetcher,
 }
 
 impl RobotsChecker {
     /// Create a new robots checker
     pub fn new(user_agent: String) -> Self {
-        let fetcher = crate::crawler::Fetcher::new(
-            user_agent.clone(),
-            10, // 10 second timeout for robots.txt
-            1024 * 1024, // 1MB max size
-        );
-        
         Self {
             cache: Arc::new(Mutex::new(HashMap::new())),
             cache_duration: Duration::from_secs(3600), // Cache for 1 hour
             user_agent,
-            fetcher,
         }
     }
     
@@ -142,10 +134,15 @@ impl RobotsChecker {
     
     /// Fetch and parse robots.txt
     async fn fetch_and_parse(&self, robots_url: &Url) -> Result<RobotsRules> {
+        // Create a new fetcher for this request
+        let fetcher = crate::crawler::Fetcher::new(
+            self.user_agent.clone(),
+            10, // 10 second timeout
+            1024 * 1024, // 1MB max
+        );
+        
         // Use tokio to run the blocking fetch operation
         let url = robots_url.clone();
-        let fetcher = self.fetcher.clone();
-        
         let response = tokio::task::spawn_blocking(move || {
             fetcher.fetch(&url)
         }).await
