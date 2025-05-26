@@ -14,6 +14,7 @@ pub struct FetchResponse {
 }
 
 /// HTTP Fetcher for downloading web pages
+#[derive(Clone)]
 pub struct Fetcher {
     client: ureq::Agent,
     max_size: usize,
