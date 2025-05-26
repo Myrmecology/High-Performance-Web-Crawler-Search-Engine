@@ -16,8 +16,6 @@ pub struct FetchResponse {
 /// HTTP Fetcher for downloading web pages
 pub struct Fetcher {
     client: ureq::Agent,
-    user_agent: String,
-    timeout: Duration,
     max_size: usize,
 }
 
@@ -31,8 +29,6 @@ impl Fetcher {
         
         Self {
             client,
-            user_agent,
-            timeout: Duration::from_secs(timeout_seconds),
             max_size,
         }
     }
