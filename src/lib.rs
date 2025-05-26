@@ -16,4 +16,5 @@ pub use common::{config::Config, error::Result};
 pub mod prelude {
     pub use crate::common::error::{Error, Result};
     pub use crate::common::config::Config;
+    pub use crate::crawler::{Crawler, CrawlerBuilder};
 }

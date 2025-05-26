@@ -1,56 +1,98 @@
-use web_crawler::crawler::{Fetcher, Parser};
+use clap::Parser as ClapParser;
+use web_crawler::prelude::*;
 use url::Url;
+use tracing::Level;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Initialize tracing for logging
-    tracing_subscriber::fmt::init();
+#[derive(ClapParser, Debug)]
+#[clap(author, version, about = "High-performance web crawler")]
+struct Args {
+    /// Starting URL to crawl
+    #[clap(value_parser)]
+    url: String,
     
-    println!("Web Crawler v0.1.0");
-    println!("==================");
+    /// Maximum number of pages to crawl
+    #[clap(short, long, default_value = "100")]
+    max_pages: usize,
     
-    // Create a fetcher and parser
-    let fetcher = Fetcher::new(
-        "RustCrawler/0.1.0".to_string(),
-        30, // timeout seconds
-        10 * 1024 * 1024, // 10MB max size
-    );
-    let parser = Parser::new();
+    /// Maximum crawl depth
+    #[clap(short = 'd', long, default_value = "3")]
+    max_depth: usize,
     
-    // Test URL
-    let test_url = Url::parse("https://example.com")?;
+    /// Number of concurrent workers
+    #[clap(short = 'c', long, default_value = "5")]
+    concurrent: usize,
     
-    println!("\nFetching {}...", test_url);
+    /// Delay between requests to same domain (milliseconds)
+    #[clap(long, default_value = "1000")]
+    delay: u64,
     
-    match fetcher.fetch(&test_url) {
-        Ok(response) => {
-            println!("✓ Success!");
-            println!("  Status: {}", response.status_code);
-            println!("  Content-Type: {:?}", response.content_type);
-            println!("  Body length: {} bytes", response.body.len());
+    /// Enable debug logging
+    #[clap(short = 'v', long)]
+    verbose: bool,
+}
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let args = Args::parse();
+    
+    // Initialize tracing
+    let level = if args.verbose { Level::DEBUG } else { Level::INFO };
+    tracing_subscriber::fmt()
+        .with_max_level(level)
+        .init();
+    
+    println!("🕷️  Web Crawler v0.1.0");
+    println!("====================");
+    
+    // Parse the starting URL
+    let start_url = Url::parse(&args.url)
+        .map_err(|e| Error::UrlParseError(e))?;
+    
+    println!("\n📋 Configuration:");
+    println!("  Starting URL: {}", start_url);
+    println!("  Max pages: {}", args.max_pages);
+    println!("  Max depth: {}", args.max_depth);
+    println!("  Concurrent workers: {}", args.concurrent);
+    println!("  Delay: {}ms", args.delay);
+    
+    // Create crawler
+    let crawler = CrawlerBuilder::new()
+        .max_pages(args.max_pages)
+        .max_depth(args.max_depth)
+        .max_concurrent(args.concurrent)
+        .delay_ms(args.delay)
+        .user_agent("RustCrawler/0.1.0 (https://github.com/yourusername/crawler)".to_string())
+        .build();
+    
+    // Add seed URL
+    crawler.add_seed(start_url).await?;
+    
+    println!("\n🚀 Starting crawl...\n");
+    
+    // Start crawling
+    let start_time = std::time::Instant::now();
+    
+    // Run the crawler
+    let result = crawler.crawl().await;
+    
+    match result {
+        Ok(stats) => {
+            let duration = start_time.elapsed();
             
-            // Parse the HTML
-            println!("\nParsing HTML...");
-            match parser.parse(&response.body, &response.url) {
-                Ok(parsed) => {
-                    println!("✓ Parsed successfully!");
-                    println!("  Title: {:?}", parsed.title);
-                    println!("  Links found: {}", parsed.links.len());
-                    println!("  Text length: {} chars", parsed.text_content.len());
-                    
-                    if !parsed.links.is_empty() {
-                        println!("\n  First few links:");
-                        for (i, link) in parsed.links.iter().take(5).enumerate() {
-                            println!("    {}. {}", i + 1, link);
-                        }
-                    }
-                }
-                Err(e) => {
-                    println!("✗ Parse error: {}", e);
-                }
+            println!("\n✅ Crawl completed!");
+            println!("\n📈 Final Statistics:");
+            println!("  Total pages crawled: {}", stats.pages_crawled);
+            println!("  Failed pages: {}", stats.pages_failed);
+            println!("  Total links found: {}", stats.total_links_found);
+            println!("  Duration: {:.2?}", duration);
+            
+            if stats.pages_crawled > 0 {
+                let pages_per_second = stats.pages_crawled as f64 / duration.as_secs_f64();
+                println!("  Speed: {:.2} pages/second", pages_per_second);
             }
         }
         Err(e) => {
-            println!("✗ Fetch error: {}", e);
+            eprintln!("\n❌ Crawl failed: {}", e);
         }
     }
     
