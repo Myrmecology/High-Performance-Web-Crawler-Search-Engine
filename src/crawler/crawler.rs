@@ -1,5 +1,5 @@
 use crate::common::error::{Error, Result};
-use crate::crawler::{Fetcher, Parser, UrlFrontier, CrawlTask};
+use crate::crawler::{Fetcher, Parser, UrlFrontier, CrawlTask, RobotsChecker};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::sync::Mutex;
@@ -59,6 +59,7 @@ pub struct Crawler {
     frontier: UrlFrontier,
     fetcher: Fetcher,
     parser: Parser,
+    robots_checker: RobotsChecker,
     stats: Arc<Mutex<CrawlStats>>,
     domain_last_access: Arc<Mutex<HashMap<String, Instant>>>,
 }
@@ -73,12 +74,14 @@ impl Crawler {
             config.max_page_size,
         );
         let parser = Parser::new();
+        let robots_checker = RobotsChecker::new(config.user_agent.clone());
         
         Self {
             config,
             frontier,
             fetcher,
             parser,
+            robots_checker,
             stats: Arc::new(Mutex::new(CrawlStats::default())),
             domain_last_access: Arc::new(Mutex::new(HashMap::new())),
         }
@@ -136,6 +139,7 @@ impl Crawler {
                 self.config.max_page_size,
             ),
             parser: Parser::new(),
+            robots_checker: self.robots_checker.clone(),
             stats: self.stats.clone(),
             domain_last_access: self.domain_last_access.clone(),
         }
@@ -215,6 +219,21 @@ impl Crawler {
     
     /// Process a single URL
     async fn process_url(&self, task: CrawlTask) -> Result<()> {
+        // Check robots.txt first
+        if !self.robots_checker.is_allowed(&task.url).await? {
+            warn!("Skipping {} - blocked by robots.txt", task.url);
+            return Ok(());
+        }
+        
+        // Check if we should also apply crawl delay from robots.txt
+        if let Some(delay) = self.robots_checker.get_crawl_delay(&task.url).await? {
+            let delay_ms = delay.as_millis() as u64;
+            if delay_ms > self.config.delay_ms {
+                // Use the longer delay specified in robots.txt
+                sleep(Duration::from_millis(delay_ms - self.config.delay_ms)).await;
+            }
+        }
+        
         // Fetch the page
         let response = match self.fetcher.fetch(&task.url) {
             Ok(resp) => resp,
