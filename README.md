@@ -2,6 +2,8 @@
 
 A blazing-fast, concurrent web crawler built with Rust that respects robots.txt, implements intelligent rate limiting, and can crawl thousands of pages efficiently.
 
+For a DEMO of this project: https://www.youtube.com/watch?v=d9wnkTk6er0
+
 ## 🎯 Project Overview
 
 This web crawler is designed to:
